@@ -1,0 +1,9 @@
+● zookeeper.service - Zookeeper distributed coordination server
+   Loaded: loaded (/usr/lib/systemd/system/zookeeper.service; enabled; vendor preset: disabled)
+   Active: failed (Result: exit-code) since Wed 2017-11-15 23:16:27 CET; 41s ago
+  Process: 25129 ExecStart=/usr/bin/java -Dzookeeper.log.dir=/var/log/zookeeper -Dzookeeper.root.logger=INFO,ROLLINGFILE -cp /usr/share/java/zookeeper/* -Dlog4j.configuration=file:/etc/zookeeper/log4j.properties -Dcom.sun.management.jmxremote org.apache.zookeeper.server.quorum.QuorumPeerMain /etc/zookeeper/zoo.cfg (code=exited, status=1/FAILURE)
+ Main PID: 25129 (code=exited, status=1/FAILURE)
+
+Nov 15 23:16:26 archi systemd[1]: Started Zookeeper distributed coordination server.
+Nov 15 23:16:27 archi systemd[1]: zookeeper.service: Main process exited, code=exited, status=1/FAILURE
+Nov 15 23:16:27 archi systemd[1]: zookeeper.service: Failed with result 'exit-code'.

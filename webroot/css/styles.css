@@ -1,0 +1,61 @@
+body {
+    display: flex;
+    flex-direction: column;
+    min-width: 32rem;
+    font-size: 1.5rem;
+    line-height: 1.8;
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+}
+
+.main {
+    margin: 0 auto;
+    width: 120rem;
+    padding: 0 2rem 8rem 2rem;
+}
+
+
+@media only screen and (max-width: 650px) .main {
+    padding: 0 1rem;
+    margin: 0;
+}
+
+@media only screen and (max-width: 1240px) .main {
+    width: auto;
+    max-width: 100%;
+    margin: 0 2rem;
+}
+
+
+.header {
+    padding: 2rem 0 1rem;
+    background-color: #FFF;
+}
+
+ul {
+    padding-left: 0;
+}
+
+li {
+    list-style: none;
+}
+
+.over {
+    background-color: #333;
+}
+
+pre {
+    font-size: 12px;
+}
+
+#cube {
+    width: 250px;
+    height: 200px;
+    background-size: 250px 200px;
+    background-image: url("https://i.ytimg.com/vi/er_xeW8acrQ/maxresdefault.jpg");
+}
+
+#Nummer {
+    color: white;
+    font-size: 200px;
+}
