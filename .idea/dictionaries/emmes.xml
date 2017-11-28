@@ -6,6 +6,7 @@
       <w>mongo</w>
       <w>mouseenter</w>
       <w>mouseleave</w>
+      <w>websocket</w>
     </words>
   </dictionary>
 </component>

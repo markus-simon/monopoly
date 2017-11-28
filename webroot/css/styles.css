@@ -27,3 +27,16 @@ text {
     position: absolute;
 }
 
+#color {
+    width: 50px;
+    height: 50px;
+    background-color: blueviolet;
+}
+
+#overlay {
+    pointer-events: none;
+}
+
+#valerie {
+
+}

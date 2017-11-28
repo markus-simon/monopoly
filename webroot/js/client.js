@@ -1,15 +1,5 @@
 var eb = new EventBus(window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/eventbus');
-/*eb.enableReconnect(true);
-eb.onreconnect = function() {
-    console.log("sasasasasa!!!");
-};
-
-eb.onmessage = function(e) {
-  console.log('message', e.data);
-};*/
-
-var data = [];
-
+eb.reconnectEnabled = true;
 eb.onopen = function()
 {
     var width    = window.outerWidth;
@@ -17,13 +7,64 @@ eb.onopen = function()
     var tileSize = window.outerHeight / 14;
     var size     = 10;
     var eyes;
+    var data = [];
+    var player = {};
+
+    var board = d3.select("#main")
+        .append("svg")
+        .attr("width", window.innerWidth)
+        .attr("height", window.innerHeight);
+
+
+    var start = d3.select("svg").append("rect")
+        .attr("id", "start")
+        .attr("width", window.innerWidth)
+        .attr("height", window.innerHeight)
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("fill", "#ccc");
+
+    var startText = d3.select("svg").append("text")
+        .attr("x", 480)
+        .attr("y",305)
+        .attr("fill", "#000")
+        .attr("text-anchor", "middle")
+        .attr('alignment-baseline', 'central')
+        .text("Warte auf Player 2");
 
 
 
+
+    eb.registerHandler("players.ready", function(error, message) {
+        start.remove();
+        startText.remove();
+    });
+
+    eb.registerHandler("player.joined", function(error, message) {
+        console.log(message.body);
+
+        var circle = board.append("g")
+            .attr("id", "player_" + message.body.name);
+
+        circle.append("circle")
+            .attr("r", tileSize / 4)
+            .attr("stroke", "#000")
+            .attr("fill", message.body.color);
+
+        d3.select("#player_" + message.body.name).attr("transform", d3.select("#tile_" + message.body.position).attr("transform"));
+        d3.select("#player_" + message.body.name).select("circle").attr("transform", "translate(" + tileSize / 2 + "," + tileSize / 2 + ")");
+    });
+
+    eb.registerHandler("player.left", function(error, message) {
+        console.log("player left," + message.body);
+    });
 
     eb.send("init.board", {}, function(error, message) {
         initBoard(message.body);
     });
+
+
+
 
 
 
@@ -65,10 +106,9 @@ eb.onopen = function()
             return "translate(" + x + ", " + y + "), rotate(" + a + ")";
         }
 
-        var board = d3.select("#main")
-            .append("svg")
-            .attr("width", width)
-            .attr("height", height);
+
+
+
 
         var tile = board.selectAll("g")
             .data(data)
@@ -158,59 +198,42 @@ eb.onopen = function()
             .attr("y", (tileSize * 1.5) + 10)
             .text("Los");
 
-        var circle = board.append("g")
-            .attr("id", "circle");
-
-        circle.append("circle")
-            .attr("r", tileSize / 4)
-            .attr("stroke", "#000")
-            .attr("fill", "#ff00ff");
-
-
-
 
         // Stats
         var playerStats = board.append("g")
             .attr("id", "stats")
-            .attr("transform", "translate(" + (window.innerWidth - 300) + "," + (window.innerHeight - 150) + ")");
+            .attr("transform", "translate(" + 60 + ", " + 480 + ")");
 
         var playerMoney = playerStats.append("text")
-            .attr("fill", "#000")
-            .attr("x", 100)
-            .attr("y", 100)
-            .text("2222");
+            .attr("id", "money-counter")
+            .attr("fill", "#000");
 
-
-
-        // Players
-        eb.registerHandler("player.joined", function(error, message) {
-            console.log(message.body);
-        });
-
-        eb.registerHandler("player.left", function(error, message) {
-            d3.select("#player_" + message.body.textHandlerID).remove();
-        });
-
-/*        eb.registerHandler("init.players.done", function(error, message) {
-//            initPlayers();
-            generatePlayerList(message.body); */
-            throwButton.on("click", function() {
-                eb.send("play", {}, function(error, reply) {
-                    if (error) {
-                        console.log("error" + error)
+        throwButton.on("click", function() {
+            eb.send("play", player, function(error, reply) {
+                if (error) {
+                    console.log("error" + error)
+                } else {
+                    if (reply.body.name === player.name) {
+                        playerMoney.text(reply.body.money);
+                    } else {
+                        alert("du bist NICHT dran, ok!?");
                     }
-                });
+                }
             });
-            /*
-        });*/
+        });
 
-
-
-
+        var overlay = d3.select("svg").append("rect")
+            .attr("id", "overlay")
+            .attr("width", window.innerWidth)
+            .attr("height", window.innerHeight)
+            .attr("opacity", 0)
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("fill", "#ccc");
 
         var buyContainer = d3.select("svg").append("g")
             .attr("id", "buy-container")
-            .style("opacity", 0);
+            .attr("transform", "translate(0," + -500 + ")");
 
         var buyContainerBg = buyContainer.append("rect")
             .attr("width", 500)
@@ -234,7 +257,35 @@ eb.onopen = function()
             .attr("text-anchor", "middle")
             .attr('alignment-baseline', 'central');
 
-        buyContainer.append("rect")
+        var buy = buyContainer.append("rect")
+            .attr("width", 150)
+            .attr("height", 50)
+            .attr("x", 180)
+            .attr("y", 280)
+            .attr("fill", "#fff")
+            .attr("stroke", "#000")
+            .on("click", function() {
+                player.wants = 1;
+                eb.send("buy", player, function(error, reply) {
+                    if (!error) {
+                        buyContainer.attr("transform", "translate(0," + -500 + ")");
+                        playerMoney.text(reply.body.money);
+
+                    } else {
+                        console.log("error" + error)
+                    }
+                })
+            });
+
+        buyContainer.append("text")
+            .attr("x", 255)
+            .attr("y",305)
+            .attr("fill", "#000")
+            .attr("text-anchor", "middle")
+            .attr('alignment-baseline', 'central')
+            .text("Ja");
+
+        var buynot = buyContainer.append("rect")
             .attr("width", 150)
             .attr("height", 50)
             .attr("x", 400)
@@ -242,14 +293,15 @@ eb.onopen = function()
             .attr("fill", "#fff")
             .attr("stroke", "#000")
             .on("click", function() {
+                player.wants = 0;
                 eb.send("buy", player, function(error, reply) {
                     if (!error) {
-                        buyContainer.style("opacity", 0);
+                        buyContainer.attr("transform", "translate(0," + -500 + ")");
                     } else {
                         console.log("error" + error)
                     }
                 })
-            })
+            });
 
         buyContainer.append("text")
             .attr("x", 480)
@@ -257,56 +309,57 @@ eb.onopen = function()
             .attr("fill", "#000")
             .attr("text-anchor", "middle")
             .attr('alignment-baseline', 'central')
-            .text("Kaufen?");
+            .text("Nein");
+
+
+
 
         eb.registerHandler("played", function(error, document) {
-            var cubeAmount1 = document.cube1;
-            var cubeAmount2 = document.cube2;
-            var position    = document.position;
-            var buyable     = document.buyable;
+            var cubeAmount1 = document.body.cube1;
+            var cubeAmount2 = document.body.cube2;
+            var position    = document.body.position;
+            var buyable     = document.body.buyable;
+            var playerName  = document.body.name;
 
-            if (buyable === true) {
-                buyNameLabel.text(data[position].label);
-                buyPriceLabel.text(data[position].price);
-                buyContainer.style("opacity", 1);
+            overlay.style("opacity", 0.8);
+
+            if (playerName === player.name) {
+                if (buyable === true) {
+                    buyNameLabel.text(data[position].label);
+                    buyPriceLabel.text(data[position].price);
+                    buyContainer.attr("transform", "translate(0, 0)");
+                } else {
+                    buyContainer.attr("transform", "translate(0, " + -500 + ")");
+                }
+
             } else {
-                buyContainer.style("opacity", 0);
+                if (buyable === true) {
+                    overlay.style("opacity", 0.8);
+                } else {
+                    overlay.style("opacity", 0);
+                }
             }
 
             cubeLabel1.text(cubeAmount1);
             cubeLabel2.text(cubeAmount2);
-
-            if (position > data.length) {
-                position = position - data.length;
-                addMoneyToPlayer(2000);
-            }
-            player.position = position;
-
-            playerMoney.text(player.money);
-
-
-            circle.attr("transform", d3.select("#tile_" + position).attr("transform"))
-            circle.select("circle").attr("transform", "translate(" + tileSize / 2 + "," + tileSize / 2 + ")");
-
+            d3.select("#player_" + playerName).attr("transform", d3.select("#tile_" + position).attr("transform"));
+            d3.select("#player_" + playerName).select("circle").attr("transform", "translate(" + tileSize / 2 + "," + tileSize / 2 + ")");
         });
 
 
         eb.registerHandler("bought", function(error, document) {
-            console.log(document);
-            d3.select("#tile_" + document.id); // optisches feedback, wem die straße ab jetzt gehört ...
+            if (document.body.name != player.name) {
+                overlay.style("opacity", 0);
+            }
+            buyContainer.attr("transform", "translate(0, -500)");
+            if (document.body.wants != "-1") {
+                d3.select("#tile_" + document.body.wants).append("circle")
+                    .attr("r",5)
+                    .attr("fill", document.body.color)
+                    .attr("cx",65)
+                    .attr("cy",6);
+            }
         });
-
-
-
-        function initPlayers() {
-            eb.send("init.players", {}, function(error, reply) {
-                /*if (reply !== "ok") {
-                   console.log("error" + error)
-                }*/
-            })
-        }
-
-        initPlayers();
     }
 
     function generatePlayerList(players) {
@@ -337,14 +390,53 @@ eb.onopen = function()
     }
 */
 
+    player = {
+        "collection": "players",
+        "session_id": getCookie("vertx-web.session"),
+    };
+    eb.send("find", player, function(error, message) {
+        if (message.body.length > 0) {
+            d3.select("#login").remove();
+        }
+    });
 
-/*    d3.select("#submit").on("click", function() {
-        var name = d3.select('#name').node().value;
-        eb.send("login", {"name": name}, function(reply) {
-            if (reply === "ok") {
-                d3.select("#login").remove();
-            }
+    $("#color").colorPicker();
+
+    d3.select("#submit").on("click", function() {
+        var name = d3.select('#player-name').node().value;
+        player = {
+            "collection": "players",
+            "session_id": getCookie("vertx-web.session"),
+            "name":       d3.select('#player-name').node().value,
+            "color":      rgb2hex($("#color").css("background-color"))
+        };
+        eb.send("player.add", player, function(error, reply) {
+            d3.select("#money-counter").text(reply.body.money);
+            d3.select("#login").remove();
         });
-    })*/
+    })
 };
 
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+function rgb2hex(rgb) {
+    rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+    function hex(x) {
+        return ("0" + parseInt(x).toString(16)).slice(-2);
+    }
+    return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+}

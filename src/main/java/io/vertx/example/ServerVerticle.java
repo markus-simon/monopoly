@@ -1,111 +1,101 @@
 package io.vertx.example;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelOutboundBuffer;
+import io.netty.channel.FileRegion;
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Handler;
-import io.vertx.core.buffer.Buffer;
+import io.vertx.core.json.JsonObject;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServer;
-import io.vertx.core.http.ServerWebSocket;
-import io.vertx.core.json.JsonObject;
+import io.vertx.core.http.HttpServerOptions;
+import io.vertx.core.shareddata.LocalMap;
+import io.vertx.core.shareddata.SharedData;
+import io.vertx.ext.bridge.BridgeEventType;
 import io.vertx.ext.bridge.PermittedOptions;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.Session;
+import io.vertx.ext.web.handler.CookieHandler;
+import io.vertx.ext.web.handler.SessionHandler;
 import io.vertx.ext.web.handler.StaticHandler;
+import io.vertx.ext.web.handler.UserSessionHandler;
 import io.vertx.ext.web.handler.sockjs.BridgeOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
+import io.vertx.core.net.PemKeyCertOptions;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
+import io.vertx.ext.web.sstore.ClusteredSessionStore;
+import io.vertx.ext.web.sstore.LocalSessionStore;
+import io.vertx.ext.web.sstore.SessionStore;
 
 
 public class ServerVerticle extends AbstractVerticle {
 
+    private final Logger logger = LoggerFactory.getLogger(ServerVerticle.class);
+
     @Override
     public void start() throws Exception {
-        HttpServer server = vertx.createHttpServer();
-
-        Router router = Router.router(vertx);
-        router.route().handler(StaticHandler.create());
-
-        PermittedOptions inboundPermitted1 = new PermittedOptions().setAddress("play");
-        PermittedOptions outboundPermitted1 = new PermittedOptions().setAddress("play");
-        PermittedOptions inboundPermitted2 = new PermittedOptions().setAddress("played");
-        PermittedOptions outboundPermitted2 = new PermittedOptions().setAddress("played");
-        PermittedOptions inboundPermitted3 = new PermittedOptions().setAddress("save");
-        PermittedOptions outboundPermitted3 = new PermittedOptions().setAddress("save");
-        PermittedOptions inboundPermitted4 = new PermittedOptions().setAddress("init.board");
-        PermittedOptions outboundPermitted4 = new PermittedOptions().setAddress("init.board");
-        PermittedOptions inboundPermitted5 = new PermittedOptions().setAddress("player.joined");
-        PermittedOptions outboundPermitted5 = new PermittedOptions().setAddress("player.joined");
-        PermittedOptions inboundPermitted6 = new PermittedOptions().setAddress("player.left");
-        PermittedOptions outboundPermitted6 = new PermittedOptions().setAddress("player.left");
-        PermittedOptions inboundPermitted7 = new PermittedOptions().setAddress("find");
-        PermittedOptions outboundPermitted7 = new PermittedOptions().setAddress("find");
-        PermittedOptions inboundPermitted8 = new PermittedOptions().setAddress("remove");
-        PermittedOptions outboundPermitted8 = new PermittedOptions().setAddress("remove");
-        PermittedOptions inboundPermitted9 = new PermittedOptions().setAddress("buy");
-        PermittedOptions outboundPermitted9 = new PermittedOptions().setAddress("buy");
-        PermittedOptions inboundPermitted10 = new PermittedOptions().setAddress("bought");
-        PermittedOptions outboundPermitted10 = new PermittedOptions().setAddress("bought");
-        PermittedOptions inboundPermitted11 = new PermittedOptions().setAddress("init.players");
-        PermittedOptions outboundPermitted11 = new PermittedOptions().setAddress("init.players");
-        PermittedOptions inboundPermitted12 = new PermittedOptions().setAddress("init.players.done");
-        PermittedOptions outboundPermitted12 = new PermittedOptions().setAddress("init.players.done");
-        BridgeOptions options = new BridgeOptions()
-                .addInboundPermitted(inboundPermitted1)
-                .addOutboundPermitted(outboundPermitted1)
-                .addInboundPermitted(inboundPermitted2)
-                .addOutboundPermitted(outboundPermitted2)
-                .addInboundPermitted(inboundPermitted3)
-                .addOutboundPermitted(outboundPermitted3)
-                .addInboundPermitted(inboundPermitted4)
-                .addOutboundPermitted(outboundPermitted4)
-                .addInboundPermitted(inboundPermitted5)
-                .addOutboundPermitted(outboundPermitted5)
-                .addInboundPermitted(inboundPermitted6)
-                .addOutboundPermitted(outboundPermitted6)
-                .addInboundPermitted(inboundPermitted7)
-                .addOutboundPermitted(outboundPermitted7)
-                .addInboundPermitted(inboundPermitted8)
-                .addOutboundPermitted(outboundPermitted8)
-                .addInboundPermitted(inboundPermitted9)
-                .addOutboundPermitted(outboundPermitted9)
-                .addInboundPermitted(inboundPermitted10)
-                .addOutboundPermitted(outboundPermitted10)
-                .addInboundPermitted(inboundPermitted11)
-                .addOutboundPermitted(outboundPermitted11)
-                .addInboundPermitted(inboundPermitted12)
-                .addOutboundPermitted(outboundPermitted12);
-
-
-
-        SockJSHandler ebHandler = SockJSHandler.create(vertx).bridge(options);
-        router.route("/eventbus/*").handler(ebHandler);
-/*        SockJSHandler sockJSHandler = SockJSHandler.create(vertx);
-        BridgeOptions options = new BridgeOptions();
-        sockJSHandler.bridge(options);
-
-        router.route("/eventbus/*").handler(sockJSHandler);
-        router.route('/eventbus/*').handler(SockJSHandler.create(vertx).bridge(options).socketHandler());*/
-
 
         EventBus eb = vertx.eventBus();
 
-        server.requestHandler(router::accept);
 
-        server.websocketHandler(handler -> {
-            JsonObject document = new JsonObject().put("textHandlerID", handler.textHandlerID()).put("collection", "players");
-            eb.send("save", document, ar -> {
-                if (ar.succeeded()) {
-                    eb.publish("player.joined", handler.textHandlerID());
-                }
-            });
-            handler.closeHandler(message ->{
+        // create bridge and add routes
+        BridgeOptions bridgeOptions = new BridgeOptions()
+                .addInboundPermitted(new PermittedOptions().setAddressRegex(".*"))
+                .addOutboundPermitted(new PermittedOptions().setAddressRegex(".*"));
+
+        SockJSHandler sockjsHandler = SockJSHandler.create(vertx).bridge(bridgeOptions, bridgeEvent -> {
+            if (bridgeEvent.type() == BridgeEventType.SOCKET_CREATED) {
+/*                JsonObject document = new JsonObject().put("writeHandlerID", bridgeEvent.socket().writeHandlerID()).put("collection", "players");
+                eb.send("save", document, ar -> {
+                    eb.publish("players.ready", bridgeEvent.socket().writeHandlerID());
+                });*/
+            }
+            if (bridgeEvent.type() == BridgeEventType.SOCKET_CLOSED) {
+/*                JsonObject document = new JsonObject().put("writeHandlerID", bridgeEvent.socket().writeHandlerID()).put("collection", "players");
                 eb.send("remove", document, ar -> {
-                    if (ar.succeeded()) {
-                        eb.publish("player.left", handler.textHandlerID());
-                    }
-                });
-                System.out.println("client disconnected "+handler.textHandlerID());
-            });
+                    eb.publish("player.left", bridgeEvent.socket().writeHandlerID());
+                });*/
+            }
+            if (bridgeEvent.type() == BridgeEventType.SEND) {
+                JsonObject document = new JsonObject();
+            }
+            bridgeEvent.complete(true);
         });
 
-        server.listen(8088);
+
+        // add all handlers to all routes
+        Router router = Router.router(vertx);
+
+
+        router.route().handler(CookieHandler.create());
+        router.route().handler(SessionHandler
+                .create(LocalSessionStore.create(vertx))
+/*                .setCookieHttpOnlyFlag(true)
+                .setCookieSecureFlag(true)*/
+        );
+
+        router.route("/").handler(routingContext -> {
+            Session session = routingContext.session();
+            Integer cnt = session.get("hitcount");
+            cnt = (cnt == null ? 0 : cnt) + 1;
+            session.put("hitcount", cnt);
+
+            routingContext.next();
+        });
+
+
+        router.route("/eventbus/*").handler(ctx -> sockjsHandler.handle(ctx));
+        router.route().handler(StaticHandler.create());
+
+        // create server
+        HttpServerOptions httpOptions = new HttpServerOptions()
+                .setSsl(true)
+                .setPemKeyCertOptions(
+                    new PemKeyCertOptions()
+                            .addKeyPath("/home/emmes/.ssh/neuron-key.pem")
+                            .addCertPath("/home/emmes/.ssh/neuron-crt.pem")
+                );
+        HttpServer server = vertx.createHttpServer(httpOptions).requestHandler(router::accept);
+        server.listen(22001);
     }
 }
