@@ -92,8 +92,10 @@ public class ServerVerticle extends AbstractVerticle {
                 .setSsl(true)
                 .setPemKeyCertOptions(
                     new PemKeyCertOptions()
-                            .addKeyPath("/home/emmes/.ssh/neuron-key.pem")
-                            .addCertPath("/home/emmes/.ssh/neuron-crt.pem")
+/*                            .addKeyPath("/home/emmes/.ssh/neuron-key.pem")
+                            .addCertPath("/home/emmes/.ssh/neuron-crt.pem")*/
+                            .addKeyPath("/root/.ssh/neuron-key.pem")
+                            .addCertPath("/root/.ssh/neuron-crt.pem")
                 );
         HttpServer server = vertx.createHttpServer(httpOptions).requestHandler(router::accept);
         server.listen(22001);
