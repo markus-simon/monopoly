@@ -3,45 +3,39 @@ eb.reconnectEnabled = true;
 eb.onopen = function()
 {
     var width    = window.outerWidth;
-    var height   = window.outerHeight;
-    var tileSize = window.outerHeight / 14;
+    var height   = window.innerHeight - 20;
+    var tileSize = window.innerHeight / 14;
     var size     = 10;
+    var data     = [];
+    var player   = {};
     var eyes;
-    var data = [];
-    var player = {};
+    var overlay;
 
-    var board = d3.select("#main")
-        .append("svg")
+
+    var main = d3.select("#main").append("svg")
         .attr("width", window.innerWidth)
-        .attr("height", window.innerHeight);
+        .attr("height", height);
 
-
-    var start = d3.select("svg").append("rect")
-        .attr("id", "start")
-        .attr("width", window.innerWidth)
-        .attr("height", window.innerHeight)
-        .attr("x", 0)
-        .attr("y", 0)
-        .attr("fill", "#ccc");
-
-    var startText = d3.select("svg").append("text")
-        .attr("x", 480)
-        .attr("y",305)
-        .attr("fill", "#000")
-        .attr("text-anchor", "middle")
-        .attr('alignment-baseline', 'central')
-        .text("Warte auf Player 2");
-
-
-
+    var board = main.append("g")
 
     eb.registerHandler("players.ready", function(error, message) {
-        start.remove();
-        startText.remove();
+        d3.select("#start").remove();
+        d3.select("#start-text").remove();
+
+        overlay = d3.select("#list").append("rect")
+            .attr("id", "overlay")
+            .attr("y", "-30")
+            .attr("width", 200)
+            .attr("height", 30)
+            .attr("opacity", 0)
+            .attr("fill", "#ccc");
+
+        board.transition()
+            .duration(1000)
+            .attr("transform", "translate(950,30)scale(1.4, 0.7)rotate(45)");
     });
 
     eb.registerHandler("player.joined", function(error, message) {
-        console.log(message.body);
 
         var circle = board.append("g")
             .attr("id", "player_" + message.body.name);
@@ -51,8 +45,27 @@ eb.onopen = function()
             .attr("stroke", "#000")
             .attr("fill", message.body.color);
 
-        d3.select("#player_" + message.body.name).attr("transform", d3.select("#tile_" + message.body.position).attr("transform"));
-        d3.select("#player_" + message.body.name).select("circle").attr("transform", "translate(" + tileSize / 2 + "," + tileSize / 2 + ")");
+        d3.select("#player_" + message.body.name)
+            .attr("transform", d3.select("#tile_" + message.body.position)
+            .attr("transform"));
+
+        d3.select("#player_" + message.body.name).select("circle")
+            .attr("transform", "translate(" + tileSize / 2 + "," + tileSize / 2 + ")");
+
+        var playerEntry = d3.select("#list").append("g")
+            .attr("class", "player")
+            .attr("id", "list-entry-" + message.body.name)
+            .attr("transform", "translate(40," + (d3.selectAll(".player")._groups[0].length) * 30 + ")");
+
+        playerEntry.append("text")
+            .text(message.body.name);
+
+        playerEntry.append("rect")
+            .attr("x", -25)
+            .attr("y", -20)
+            .attr("width", 20)
+            .attr("height", 20)
+            .attr("fill", message.body.color);
     });
 
     eb.registerHandler("player.left", function(error, message) {
@@ -63,13 +76,7 @@ eb.onopen = function()
         initBoard(message.body);
     });
 
-
-
-
-
-
     function initBoard(data) {
-
         var arr  = [];
         for (var i = 0; i < data.length; i += size) {
             var smallarray = data.slice(i, i + size);
@@ -105,10 +112,6 @@ eb.onopen = function()
             }
             return "translate(" + x + ", " + y + "), rotate(" + a + ")";
         }
-
-
-
-
 
         var tile = board.selectAll("g")
             .data(data)
@@ -189,7 +192,6 @@ eb.onopen = function()
             .attr("rx", "10")
             .attr("ry", "10");
 
-
         var ThrowButtonLabel = cubes.append("text")
             .attr("text-anchor", "middle")
             .attr('alignment-baseline', 'central')
@@ -198,15 +200,38 @@ eb.onopen = function()
             .attr("y", (tileSize * 1.5) + 10)
             .text("Los");
 
-
-        // Stats
-        var playerStats = board.append("g")
+        var playerStats = main.append("g")
             .attr("id", "stats")
-            .attr("transform", "translate(" + 60 + ", " + 480 + ")");
+            .attr("transform", "translate(" + (window.innerWidth - 200) + ", " + 30 + ")");
+
+        playerStats.append("rect")
+            .attr("width",  200)
+            .attr("height", 200)
+            .attr("fill",   "#fff")
+            .style("stroke", "#333");
+
+        var playerName = playerStats.append("text")
+            .attr("id", "stats-player-name")
+            .attr("fill", "#000")
+            .attr("x", 30)
+            .attr("y", 30)
+            .text(player.name);
 
         var playerMoney = playerStats.append("text")
-            .attr("id", "money-counter")
-            .attr("fill", "#000");
+            .attr("id", "stats-money-counter")
+            .attr("fill", "#000")
+            .attr("x", 30)
+            .attr("y", 70)
+
+        var playerList = main.append("g")
+            .attr("id", "list")
+            .attr("transform", "translate(" + (window.innerWidth - 200) + ", " + (height - 200) + ")");
+
+        playerList.append("rect")
+            .attr("width",  200)
+            .attr("height", 200)
+            .attr("fill",   "#fff")
+            .style("stroke", "#333");
 
         throwButton.on("click", function() {
             eb.send("play", player, function(error, reply) {
@@ -222,16 +247,7 @@ eb.onopen = function()
             });
         });
 
-        var overlay = d3.select("svg").append("rect")
-            .attr("id", "overlay")
-            .attr("width", window.innerWidth)
-            .attr("height", window.innerHeight)
-            .attr("opacity", 0)
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("fill", "#ccc");
-
-        var buyContainer = d3.select("svg").append("g")
+        var buyContainer = main.append("g")
             .attr("id", "buy-container")
             .attr("transform", "translate(0," + -500 + ")");
 
@@ -311,9 +327,6 @@ eb.onopen = function()
             .attr('alignment-baseline', 'central')
             .text("Nein");
 
-
-
-
         eb.registerHandler("played", function(error, document) {
             var cubeAmount1 = document.body.cube1;
             var cubeAmount2 = document.body.cube2;
@@ -342,10 +355,21 @@ eb.onopen = function()
 
             cubeLabel1.text(cubeAmount1);
             cubeLabel2.text(cubeAmount2);
-            d3.select("#player_" + playerName).attr("transform", d3.select("#tile_" + position).attr("transform"));
-            d3.select("#player_" + playerName).select("circle").attr("transform", "translate(" + tileSize / 2 + "," + tileSize / 2 + ")");
-        });
 
+            d3.select("#player_" + playerName)
+                .transition()
+                .duration(1000)
+                .attr("transform", d3.select("#tile_" + position).attr("transform"));
+
+            d3.select("#player_" + playerName).select("circle")
+                .transition()
+                .duration(1000)
+                .attr("transform", "translate(" + tileSize / 2 + "," + tileSize / 2 + ")");
+
+
+            overlay.attr("transform", d3.select("#list-entry-" + playerName).attr("transform"));
+
+        });
 
         eb.registerHandler("bought", function(error, document) {
             if (document.body.name != player.name) {
@@ -364,7 +388,7 @@ eb.onopen = function()
 
     function generatePlayerList(players) {
         d3.select("#players-list").remove();
-        d3.select("svg").selectAll(".players")
+        main.selectAll(".players")
             .data(players)
             .enter()
             .append("text")
@@ -376,27 +400,16 @@ eb.onopen = function()
             .text(function(d, i) { return d.textHandlerID });
     }
 
-/*
-    function addMoneyToPlayer(amount) {
-        player.money = player.money + amount;
-    }
-
-    function withdrawMoneyFromPlayer(amount) {
-        if (player.money >= amount) {
-            player.money = player.money - amount;
-        } else {
-            alert("Pleite!");
-        }
-    }
-*/
-
     player = {
         "collection": "players",
         "session_id": getCookie("vertx-web.session"),
     };
     eb.send("find", player, function(error, message) {
         if (message.body.length > 0) {
+/*
+            // TODO relogin
             d3.select("#login").remove();
+*/
         }
     });
 
@@ -404,17 +417,39 @@ eb.onopen = function()
 
     d3.select("#submit").on("click", function() {
         var name = d3.select('#player-name').node().value;
+
+        if (name === "") {
+            d3.select('#player-name').attr("class", "invalid-input");
+            return;
+        }
         player = {
             "collection": "players",
             "session_id": getCookie("vertx-web.session"),
-            "name":       d3.select('#player-name').node().value,
+            "name":       name,
             "color":      rgb2hex($("#color").css("background-color"))
         };
         eb.send("player.add", player, function(error, reply) {
-            d3.select("#money-counter").text(reply.body.money);
+
+            var start = main.append("rect")
+                .attr("id", "start")
+                .attr("width", window.innerWidth)
+                .attr("height", height)
+                .attr("fill", "#cce3c7");
+
+            var startText = main.append("text")
+                .attr("x", window.innerWidth / 2)
+                .attr("y", height / 2)
+                .attr("fill", "#000")
+                .attr("text-anchor", "middle")
+                .attr('alignment-baseline', 'central')
+                .attr("id", "start-text")
+                .text("Warte auf andere Player!");
+
+            d3.select("#stats-player-name").text(reply.body.name);
+            d3.select("#stats-money-counter").text(reply.body.money);
             d3.select("#login").remove();
         });
-    })
+    });
 };
 
 function getCookie(cname) {

@@ -114,7 +114,6 @@ public class PersistorVerticle extends AbstractVerticle {
             });
         });
 
-
         eb.consumer("updateCollection", message -> {
             JsonObject document = new JsonObject(message.body().toString());
             String collection   = document.getString("collection");
@@ -133,8 +132,6 @@ public class PersistorVerticle extends AbstractVerticle {
         eb.send("remove",new JsonObject().put("collection", "players"));
         eb.send("remove",new JsonObject().put("collection", "weristdran"));
     }
-
-
 
     private String getCurrentLocalDateTimeStamp() {
         return LocalDateTime.now()
