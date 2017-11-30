@@ -45,19 +45,13 @@ public class ServerVerticle extends AbstractVerticle {
 
         SockJSHandler sockjsHandler = SockJSHandler.create(vertx).bridge(bridgeOptions, bridgeEvent -> {
             if (bridgeEvent.type() == BridgeEventType.SOCKET_CREATED) {
-/*                JsonObject document = new JsonObject().put("writeHandlerID", bridgeEvent.socket().writeHandlerID()).put("collection", "players");
-                eb.send("save", document, ar -> {
-                    eb.publish("players.ready", bridgeEvent.socket().writeHandlerID());
-                });*/
+
             }
             if (bridgeEvent.type() == BridgeEventType.SOCKET_CLOSED) {
-/*                JsonObject document = new JsonObject().put("writeHandlerID", bridgeEvent.socket().writeHandlerID()).put("collection", "players");
-                eb.send("remove", document, ar -> {
-                    eb.publish("player.left", bridgeEvent.socket().writeHandlerID());
-                });*/
+
             }
             if (bridgeEvent.type() == BridgeEventType.SEND) {
-                JsonObject document = new JsonObject();
+
             }
             bridgeEvent.complete(true);
         });
@@ -70,8 +64,6 @@ public class ServerVerticle extends AbstractVerticle {
         router.route().handler(CookieHandler.create());
         router.route().handler(SessionHandler
                 .create(LocalSessionStore.create(vertx))
-/*                .setCookieHttpOnlyFlag(true)
-                .setCookieSecureFlag(true)*/
         );
 
         router.route("/").handler(routingContext -> {
@@ -92,10 +84,10 @@ public class ServerVerticle extends AbstractVerticle {
                 .setSsl(true)
                 .setPemKeyCertOptions(
                     new PemKeyCertOptions()
-/*                            .addKeyPath("/home/emmes/.ssh/neuron-key.pem")
-                            .addCertPath("/home/emmes/.ssh/neuron-crt.pem")*/
-                            .addKeyPath("/root/.ssh/neuron-key.pem")
-                            .addCertPath("/root/.ssh/neuron-crt.pem")
+                            .addKeyPath("/home/emmes/.ssh/neuron-key.pem")
+                            .addCertPath("/home/emmes/.ssh/neuron-crt.pem")
+/*                            .addKeyPath("/root/.ssh/neuron-key.pem")
+                            .addCertPath("/root/.ssh/neuron-crt.pem")*/
                 );
         HttpServer server = vertx.createHttpServer(httpOptions).requestHandler(router::accept);
         server.listen(22001);

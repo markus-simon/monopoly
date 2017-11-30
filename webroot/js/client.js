@@ -2,21 +2,29 @@ var eb = new EventBus(window.location.protocol + '//' + window.location.hostname
 eb.reconnectEnabled = true;
 eb.onopen = function()
 {
-    var width    = window.outerWidth;
-    var height   = window.innerHeight - 20;
-    var tileSize = window.innerHeight / 14;
-    var size     = 10;
-    var data     = [];
-    var player   = {};
+    var width     = window.innerWidth;
+    var height    = window.innerHeight - 20;
+    var min       = Math.min(width, height)
+    var size      = 10;
+    var margin    = 10;
+    var tileSize  = (min - (size+1) * margin ) / (size+1);
+
+    var data      = [];
+    var player    = {};
     var eyes;
     var overlay;
 
-
     var main = d3.select("#main").append("svg")
-        .attr("width", window.innerWidth)
+        .attr("width", width)
         .attr("height", height);
 
-    var board = main.append("g")
+    var board = main.append("g");
+
+    board.append("text")
+        .attr("x", 310)
+        .attr("y",305)
+        .attr("fill", "#000")
+        .text(tileSize);
 
     eb.registerHandler("players.ready", function(error, message) {
         d3.select("#start").remove();
@@ -24,15 +32,16 @@ eb.onopen = function()
 
         overlay = d3.select("#list").append("rect")
             .attr("id", "overlay")
-            .attr("y", "-30")
             .attr("width", 200)
+            .attr("x", -40)
             .attr("height", 30)
             .attr("opacity", 0)
             .attr("fill", "#ccc");
 
         board.transition()
             .duration(1000)
-            .attr("transform", "translate(950,30)scale(1.4, 0.7)rotate(45)");
+            .delay(1000)
+            .attr("transform", "translate(" + ((width / 2) + margin) + ",30)scale(1.4, 0.65)rotate(45)");
     });
 
     eb.registerHandler("player.joined", function(error, message) {
@@ -68,6 +77,13 @@ eb.onopen = function()
             .attr("fill", message.body.color);
     });
 
+    eb.registerHandler("rent.collected", function(error, message) {
+        if (message.body.name === player.name) {
+            var currentMoney = d3.select("#stats-money-counter").text();
+            d3.select("#stats-money-counter").text(parseInt(currentMoney) + parseInt(message.body.rent))
+        }
+    });
+
     eb.registerHandler("player.left", function(error, message) {
         console.log("player left," + message.body);
     });
@@ -82,33 +98,34 @@ eb.onopen = function()
             var smallarray = data.slice(i, i + size);
             arr.push(smallarray);
         }
-        var biggestX = arr[0].length * tileSize + tileSize + 25;
-        var biggestY = biggestX;
+
+        var biggestX = min + margin;
+        var biggestY = min + margin;
 
         function calculateTilePosition(d, i) {
             var x;
             var y;
             var a;
             if (arr[0].indexOf(d) !== -1) {
-                biggestX = biggestX - tileSize - 10;
-                x = tileSize + 10 + biggestX;
-                y = 10 + biggestY;
+                biggestX = biggestX - tileSize - margin;
+                x = biggestX;
+                y = min - tileSize;
                 a = 0;
             } else if(arr[1].indexOf(d) !== -1) {
-                biggestY = biggestY - tileSize - 10;
-                x = biggestX + tileSize;
-                y = tileSize + 10 + 10 + biggestY;
+                biggestY = biggestY - tileSize - margin;
+                x = tileSize + margin;
+                y = biggestY;
                 a = 90;
             } else if(arr[2].indexOf(d) !== -1) {
-                x = (tileSize + 10) * (i - 20);
-                y = 10;
-                a = 0;
-                biggestX = x;
+                biggestX = biggestX + tileSize + margin;
+                x = biggestX - tileSize - (margin*2);
+                y = tileSize + margin;
+                a = 180;
             } else if(arr[3].indexOf(d) !== -1) {
-                x = biggestX + 10 + tileSize;
+                biggestY = biggestY + tileSize + margin;
+                x = biggestX - tileSize - margin;
                 y = (10 + tileSize) * (i - 29);
-                a = -90;
-
+                a = 270;
             }
             return "translate(" + x + ", " + y + "), rotate(" + a + ")";
         }
@@ -155,7 +172,7 @@ eb.onopen = function()
             .attr("width", tileSize)
             .attr("height", tileSize)
             .attr("stroke", "#000")
-            .attr("fill", "#ccc")
+            .attr("fill", "#fff")
             .attr("rx", "10")
             .attr("ry", "10");
 
@@ -170,7 +187,7 @@ eb.onopen = function()
             .attr("width", tileSize)
             .attr("height", tileSize)
             .attr("stroke", "#000")
-            .attr("fill", "#ccc")
+            .attr("fill", "#fff")
             .attr("x", tileSize + 10)
             .attr("rx", "10")
             .attr("ry", "10");
@@ -198,11 +215,11 @@ eb.onopen = function()
             .attr("fill", "#000")
             .attr("x", tileSize)
             .attr("y", (tileSize * 1.5) + 10)
-            .text("Los");
+            .text("wuerfeln");
 
         var playerStats = main.append("g")
             .attr("id", "stats")
-            .attr("transform", "translate(" + (window.innerWidth - 200) + ", " + 30 + ")");
+            .attr("transform", "translate(" + (width - 200 - margin) + ", " + 30 + ")");
 
         playerStats.append("rect")
             .attr("width",  200)
@@ -225,7 +242,7 @@ eb.onopen = function()
 
         var playerList = main.append("g")
             .attr("id", "list")
-            .attr("transform", "translate(" + (window.innerWidth - 200) + ", " + (height - 200) + ")");
+            .attr("transform", "translate(" + (width - 200 - margin) + ", " + (height - 200) + ")");
 
         playerList.append("rect")
             .attr("width",  200)
@@ -236,7 +253,7 @@ eb.onopen = function()
         throwButton.on("click", function() {
             eb.send("play", player, function(error, reply) {
                 if (error) {
-                    console.log("error" + error)
+                    console.log(error.message)
                 } else {
                     if (reply.body.name === player.name) {
                         playerMoney.text(reply.body.money);
@@ -249,42 +266,42 @@ eb.onopen = function()
 
         var buyContainer = main.append("g")
             .attr("id", "buy-container")
-            .attr("transform", "translate(0," + -500 + ")");
+            .attr("transform", "translate(" + margin + "," + (height + margin) + ")");
 
         var buyContainerBg = buyContainer.append("rect")
-            .attr("width", 500)
+            .attr("width", 400)
             .attr("height", 300)
-            .attr("x", 100)
-            .attr("y", 100)
             .attr("fill", "#fff")
             .attr("stroke", "#000")
 
         var buyNameLabel = buyContainer.append("text")
-            .attr("x", 200)
-            .attr("y", 140)
+            .attr("x", 95)
+            .attr("y", 30)
             .attr("fill", "#000")
             .attr("text-anchor", "middle")
             .attr('alignment-baseline', 'central');
 
         var buyPriceLabel = buyContainer.append("text")
-            .attr("x", 500)
-            .attr("y", 140)
+            .attr("x", 350)
+            .attr("y", 30)
             .attr("fill", "#000")
-            .attr("text-anchor", "middle")
+            .attr("text-anchor", "end")
             .attr('alignment-baseline', 'central');
 
         var buy = buyContainer.append("rect")
             .attr("width", 150)
             .attr("height", 50)
-            .attr("x", 180)
-            .attr("y", 280)
+            .attr("x", 20)
+            .attr("y", 240)
             .attr("fill", "#fff")
             .attr("stroke", "#000")
             .on("click", function() {
                 player.wants = 1;
                 eb.send("buy", player, function(error, reply) {
                     if (!error) {
-                        buyContainer.attr("transform", "translate(0," + -500 + ")");
+                        buyContainer.transition()
+                            .duration(1000)
+                            .attr("transform", "translate(" + margin + "," + (height + margin) + ")");
                         playerMoney.text(reply.body.money);
 
                     } else {
@@ -294,8 +311,8 @@ eb.onopen = function()
             });
 
         buyContainer.append("text")
-            .attr("x", 255)
-            .attr("y",305)
+            .attr("x", 95)
+            .attr("y",265)
             .attr("fill", "#000")
             .attr("text-anchor", "middle")
             .attr('alignment-baseline', 'central')
@@ -304,15 +321,17 @@ eb.onopen = function()
         var buynot = buyContainer.append("rect")
             .attr("width", 150)
             .attr("height", 50)
-            .attr("x", 400)
-            .attr("y", 280)
+            .attr("x", 230)
+            .attr("y", 240)
             .attr("fill", "#fff")
             .attr("stroke", "#000")
             .on("click", function() {
                 player.wants = 0;
                 eb.send("buy", player, function(error, reply) {
                     if (!error) {
-                        buyContainer.attr("transform", "translate(0," + -500 + ")");
+                        buyContainer.transition()
+                            .duration(1000)
+                            .attr("transform", "translate(" + margin + "," + (height + margin) + ")");
                     } else {
                         console.log("error" + error)
                     }
@@ -320,8 +339,8 @@ eb.onopen = function()
             });
 
         buyContainer.append("text")
-            .attr("x", 480)
-            .attr("y",305)
+            .attr("x", 310)
+            .attr("y", 265)
             .attr("fill", "#000")
             .attr("text-anchor", "middle")
             .attr('alignment-baseline', 'central')
@@ -340,16 +359,24 @@ eb.onopen = function()
                 if (buyable === true) {
                     buyNameLabel.text(data[position].label);
                     buyPriceLabel.text(data[position].price);
-                    buyContainer.attr("transform", "translate(0, 0)");
+                    buyContainer.transition()
+                        .duration(1000)
+                        .attr("transform", "translate(" + margin + "," + (height - 300 - margin) + ")");
                 } else {
-                    buyContainer.attr("transform", "translate(0, " + -500 + ")");
+                    buyContainer.transition()
+                        .duration(1000)
+                        .attr("transform", "translate(" + margin + "," + (height + margin) + ")");
                 }
 
             } else {
                 if (buyable === true) {
+/*
                     overlay.style("opacity", 0.8);
+*/
                 } else {
+/*
                     overlay.style("opacity", 0);
+*/
                 }
             }
 
@@ -372,10 +399,6 @@ eb.onopen = function()
         });
 
         eb.registerHandler("bought", function(error, document) {
-            if (document.body.name != player.name) {
-                overlay.style("opacity", 0);
-            }
-            buyContainer.attr("transform", "translate(0, -500)");
             if (document.body.wants != "-1") {
                 d3.select("#tile_" + document.body.wants).append("circle")
                     .attr("r",5)

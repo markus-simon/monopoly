@@ -150,6 +150,20 @@ public class GameVerticle extends AbstractVerticle {
                                             } else {
                                                 int newMoney2 = currentMoney - rent;
                                                 player.put("money", newMoney2);
+
+                                                String owner = result.getJsonObject(0).getMap().get("owner").toString();
+                                                JsonObject findPlayerByNameQuery = new JsonObject().put("collection", "players").put("name", owner);
+
+                                                JsonObject mongoMessage2 = new JsonObject();
+                                                JsonObject addRent = new JsonObject().put("$inc", new JsonObject().put("money", rent));
+
+                                                mongoMessage2.put("collection", "players");
+                                                mongoMessage2.put("findQuery", findPlayerByNameQuery);
+                                                mongoMessage2.put("findUpdate", addRent);
+
+                                                eb.send("updateCollection", mongoMessage2, res5 -> {
+                                                    eb.publish("rent.collected", new JsonObject().put("name", owner).put("rent", rent));
+                                                });
                                             }
                                         }
                                     }
