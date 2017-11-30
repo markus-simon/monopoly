@@ -14,51 +14,51 @@ public class GameVerticle extends AbstractVerticle {
     @Override
     public void start() throws Exception {
         EventBus eb = vertx.eventBus();
-        array.add(new JsonObject().put("type", "start"  ).put("owner", "nobody").put("price", ""    ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Los"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "40"  ).put("rent", "4"  ).put("color", "#0c1d65").put("label", "Badstrasse"));
-        array.add(new JsonObject().put("type", "card"   ).put("owner", ""      ).put("price", ""    ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Gemeinschaft"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "80"  ).put("rent", "8"  ).put("color", "#0c1d65").put("label", "Turmstrasse"));
-        array.add(new JsonObject().put("type", "tax"    ).put("owner", "nobody").put("price", "200" ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Steuer"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "500" ).put("rent", "50" ).put("color", "#fff"   ).put("label", "Suedbahnhof"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "120" ).put("rent", "12" ).put("color", "#6ca1f1").put("label", "Chausseestrasse"));
-        array.add(new JsonObject().put("type", "card"   ).put("owner", "nobody").put("price", ""    ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Ereignis"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "120" ).put("rent", "12" ).put("color", "#6ca1f1").put("label", "Elisenstrasse"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "160" ).put("rent", "16" ).put("color", "#6ca1f1").put("label", "Poststrasse"));
-        array.add(new JsonObject().put("type", "nothing").put("owner", "nobody").put("price", ""    ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Zu Besuch"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "200" ).put("rent", "20" ).put("color", "#3e1f41").put("label", "Seestrasse"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "80"  ).put("rent", "8"  ).put("color", "#fff"   ).put("label", "Kraftwerk"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "200" ).put("rent", "20" ).put("color", "#3e1f41").put("label", "Hafenstrasse"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "240" ).put("rent", "24" ).put("color", "#3e1f41").put("label", "Neue Strasse"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "500" ).put("rent", "50" ).put("color", "#fff"   ).put("label", "Westbahnhof"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "280" ).put("rent", "28" ).put("color", "#dd8426").put("label", "Muenchner Strasse"));
-        array.add(new JsonObject().put("type", "card"   ).put("owner", ""      ).put("price", ""    ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Gemeinschaft"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "280" ).put("rent", "28" ).put("color", "#dd8426").put("label", "Wiener Strasse"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "320" ).put("rent", "32" ).put("color", "#dd8426").put("label", "Berliner Strasse"));
-        array.add(new JsonObject().put("type", "nothing").put("owner", "nobody").put("price", ""    ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Frei Parken"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "360" ).put("rent", "36" ).put("color", "#cc2e3c").put("label", "Theaterstrasse"));
-        array.add(new JsonObject().put("type", "card"   ).put("owner", "nobody").put("price", ""    ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Ereignis"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "360" ).put("rent", "36" ).put("color", "#cc2e3c").put("label", "Museumsstrasse"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "400" ).put("rent", "40" ).put("color", "#cc2e3c").put("label", "Opernplatz"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "500" ).put("rent", "50" ).put("color", "#fff"   ).put("label", "Nordbahnhof"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "440" ).put("rent", "44" ).put("color", "#e4cd3f").put("label", "Lessingstrasse"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "440" ).put("rent", "44" ).put("color", "#e4cd3f").put("label", "Schillerstrasse"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "80"  ).put("rent", "8"  ).put("color", "#fff"   ).put("label", "Wasserwerk"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "480" ).put("rent", "48" ).put("color", "#e4cd3f").put("label", "Goethestrasse"));
-        array.add(new JsonObject().put("type", "prison" ).put("owner", "nobody").put("price", ""    ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Gefaengnis"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "520" ).put("rent", "52" ).put("color", "#1e6351").put("label", "Rathausplatz"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "520" ).put("rent", "52" ).put("color", "#1e6351").put("label", "Hauptstrasse"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", ""      ).put("price", ""    ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Gemeinschaft"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "560" ).put("rent", "50" ).put("color", "#1e6351").put("label", "Bahnhofsstrasse"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "500" ).put("rent", "50" ).put("color", "#fff"   ).put("label", "Hauptbahnhof"));
-        array.add(new JsonObject().put("type", "card"   ).put("owner", "nobody").put("price", ""    ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Ereignis"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "700" ).put("rent", "70" ).put("color", "#1244b7").put("label", "Parkstrasse"));
-        array.add(new JsonObject().put("type", "tax"    ).put("owner", "nobody").put("price", "200" ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Steuer"));
-        array.add(new JsonObject().put("type", "street" ).put("owner", "nobody").put("price", "1000").put("rent", "100").put("color", "#1244b7").put("label", "Schlossallee"));
+        array.add(new JsonObject().put("type", "start"     ).put("owner", "nobody").put("price", ""    ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Los"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "40"  ).put("rent", "4"  ).put("color", "#0c1d65").put("label", "Badstrasse"));
+        array.add(new JsonObject().put("type", "card"      ).put("owner", ""      ).put("price", ""    ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Gemeinschaft"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "80"  ).put("rent", "8"  ).put("color", "#0c1d65").put("label", "Turmstrasse"));
+        array.add(new JsonObject().put("type", "tax"       ).put("owner", ""      ).put("price", "200" ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Steuer"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "500" ).put("rent", "50" ).put("color", "#fff"   ).put("label", "Suedbahnhof"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "120" ).put("rent", "12" ).put("color", "#6ca1f1").put("label", "Chausseestrasse"));
+        array.add(new JsonObject().put("type", "card"      ).put("owner", ""      ).put("price", ""    ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Ereignis"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "120" ).put("rent", "12" ).put("color", "#6ca1f1").put("label", "Elisenstrasse"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "160" ).put("rent", "16" ).put("color", "#6ca1f1").put("label", "Poststrasse"));
+        array.add(new JsonObject().put("type", "prison"    ).put("owner", ""      ).put("price", ""    ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Zu Besuch"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "200" ).put("rent", "20" ).put("color", "#3e1f41").put("label", "Seestrasse"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "80"  ).put("rent", "8"  ).put("color", "#fff"   ).put("label", "Kraftwerk"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "200" ).put("rent", "20" ).put("color", "#3e1f41").put("label", "Hafenstrasse"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "240" ).put("rent", "24" ).put("color", "#3e1f41").put("label", "Neue Strasse"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "500" ).put("rent", "50" ).put("color", "#fff"   ).put("label", "Westbahnhof"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "280" ).put("rent", "28" ).put("color", "#dd8426").put("label", "Muenchner Strasse"));
+        array.add(new JsonObject().put("type", "card"      ).put("owner", ""      ).put("price", ""    ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Gemeinschaft"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "280" ).put("rent", "28" ).put("color", "#dd8426").put("label", "Wiener Strasse"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "320" ).put("rent", "32" ).put("color", "#dd8426").put("label", "Berliner Strasse"));
+        array.add(new JsonObject().put("type", "nothing"   ).put("owner", ""      ).put("price", ""    ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Frei Parken"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "360" ).put("rent", "36" ).put("color", "#cc2e3c").put("label", "Theaterstrasse"));
+        array.add(new JsonObject().put("type", "card"      ).put("owner", ""      ).put("price", ""    ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Ereignis"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "360" ).put("rent", "36" ).put("color", "#cc2e3c").put("label", "Museumsstrasse"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "400" ).put("rent", "40" ).put("color", "#cc2e3c").put("label", "Opernplatz"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "500" ).put("rent", "50" ).put("color", "#fff"   ).put("label", "Nordbahnhof"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "440" ).put("rent", "44" ).put("color", "#e4cd3f").put("label", "Lessingstrasse"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "440" ).put("rent", "44" ).put("color", "#e4cd3f").put("label", "Schillerstrasse"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "80"  ).put("rent", "8"  ).put("color", "#fff"   ).put("label", "Wasserwerk"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "480" ).put("rent", "48" ).put("color", "#e4cd3f").put("label", "Goethestrasse"));
+        array.add(new JsonObject().put("type", "gotoprison").put("owner", ""      ).put("price", ""    ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Gefaengnis"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "520" ).put("rent", "52" ).put("color", "#1e6351").put("label", "Rathausplatz"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "520" ).put("rent", "52" ).put("color", "#1e6351").put("label", "Hauptstrasse"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", ""      ).put("price", ""    ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Gemeinschaft"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "560" ).put("rent", "50" ).put("color", "#1e6351").put("label", "Bahnhofsstrasse"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "500" ).put("rent", "50" ).put("color", "#fff"   ).put("label", "Hauptbahnhof"));
+        array.add(new JsonObject().put("type", "card"      ).put("owner", ""      ).put("price", ""    ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Ereignis"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "700" ).put("rent", "70" ).put("color", "#1244b7").put("label", "Parkstrasse"));
+        array.add(new JsonObject().put("type", "tax"       ).put("owner", ""      ).put("price", "200" ).put("rent", ""   ).put("color", "#fff"   ).put("label", "Steuer"));
+        array.add(new JsonObject().put("type", "street"    ).put("owner", "nobody").put("price", "1000").put("rent", "100").put("color", "#1244b7").put("label", "Schlossallee"));
 
 
 
         eb.consumer("player.add", message -> {
-            JsonObject player  = new JsonObject(message.body().toString()).put("collection", "players").put("position", "0").put("money", "2000");
+            JsonObject player  = new JsonObject(message.body().toString()).put("collection", "players").put("position", "0").put("money", "2000").put("prison", false);
             eb.send("save", player, res -> {
                 message.reply(player);
                 player.remove("session_id");
@@ -98,8 +98,16 @@ public class GameVerticle extends AbstractVerticle {
                                 JsonObject player  = new JsonObject(res3.result().body().toString());
                                 int cube1 = new Random().ints(1, (6 + 1)).limit(1).findFirst().getAsInt();
                                 int cube2 = new Random().ints(1, (6 + 1)).limit(1).findFirst().getAsInt();
-/*                                int cube1 = 1;
-                                int cube2 = 2;*/
+/*                                int cube1 = 15;
+                                int cube2 = 15;*/
+
+                                if (player.getBoolean("prison").equals(true)) {
+                                    if (cube1 == cube2) {
+                                        player.put("prison", false);
+                                    } else {
+                                        JsonObject dubleibst = new JsonObject();
+                                    }
+                                }
                                 int currentPosition = Integer.parseInt(player.getMap().get("position").toString());
                                 int newPosition     = currentPosition + cube1 + cube2;
 
@@ -107,7 +115,7 @@ public class GameVerticle extends AbstractVerticle {
                                 int newMoney = currentMoney;
                                 if (newPosition >= array.size()) {
                                     newPosition = newPosition - array.size();
-                                    newMoney = currentMoney + 2000;
+                                    newMoney = currentMoney + 200;
                                 }
                                 player.put("money", newMoney);
                                 player.put("position", newPosition);
@@ -140,6 +148,13 @@ public class GameVerticle extends AbstractVerticle {
                                         if (tile.getString("type").equals("card")) {
                                             // todo karten ...
                                         }
+
+
+
+
+
+
+
                                     } else {
                                         if (tile.getString("type").equals("street")
                                                 && !result.getJsonObject(0).getMap().get("owner").equals("nobody")
@@ -167,6 +182,16 @@ public class GameVerticle extends AbstractVerticle {
                                             }
                                         }
                                     }
+
+
+                                    if (tile.getString("type").equals("gotoprison") || player.getBoolean("prison").equals(true)) {
+                                        data.put("position", 10);
+                                        player.put("position", 10);
+                                        player.put("prison", true);
+                                        data.put("prison", true);
+                                    }
+
+
                                     data.put("buyable", buyable);
                                     JsonObject jsonPublish = new JsonObject(data);
                                     JsonObject jsonReply = new JsonObject(data);
@@ -176,6 +201,7 @@ public class GameVerticle extends AbstractVerticle {
                                     JsonObject findUpdate = new JsonObject().put("$set", new JsonObject()
                                             .put("money",    player.getMap().get("money"))
                                             .put("position", player.getMap().get("position"))
+                                            .put("prison",   player.getMap().get("prison"))
                                     );
 
                                     mongoMessage.put("collection", "players");

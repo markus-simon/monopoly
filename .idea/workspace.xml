@@ -2,13 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4b941f5e-58eb-46e2-95e5-880f4449f42d" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/classes/io/vertx/example/GameVerticle.class" afterPath="$PROJECT_DIR$/out/production/classes/io/vertx/example/GameVerticle.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/classes/io/vertx/example/ServerVerticle.class" afterPath="$PROJECT_DIR$/out/production/classes/io/vertx/example/ServerVerticle.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/dictionaries/emmes.xml" afterPath="$PROJECT_DIR$/.idea/dictionaries/emmes.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/io/vertx/example/GameVerticle.java" afterPath="$PROJECT_DIR$/src/main/java/io/vertx/example/GameVerticle.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/io/vertx/example/ServerVerticle.java" afterPath="$PROJECT_DIR$/src/main/java/io/vertx/example/ServerVerticle.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webroot/js/client.js" afterPath="$PROJECT_DIR$/webroot/js/client.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
@@ -131,7 +126,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/io/vertx/example/GameVerticle.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="283">
-              <caret line="100" column="48" lean-forward="true" selection-start-line="100" selection-start-column="48" selection-end-line="100" selection-end-column="48" />
+              <caret line="111" column="86" lean-forward="true" selection-start-line="111" selection-start-column="86" selection-end-line="111" selection-end-column="86" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -150,9 +145,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>gemein</find>
-      <find>updated</find>
-      <find>bought</find>
       <find>played</find>
       <find>svg</find>
       <find>startText</find>
@@ -180,6 +172,9 @@
       <find>findPlayerQuery</find>
       <find>node</find>
       <find>collecte</find>
+      <find>over</find>
+      <find>true</find>
+      <find>false</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -962,14 +957,16 @@
           <properties />
           <option name="timeStamp" value="279" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/io/vertx/example/GameVerticle.java</url>
+          <line>163</line>
+          <properties />
+          <option name="timeStamp" value="452" />
+        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="450" />
+      <option name="time" value="461" />
     </breakpoint-manager>
-    <watches-manager>
-      <configuration name="Application">
-        <watch expression="res5.result().body()" language="JAVA" />
-      </configuration>
-    </watches-manager>
+    <watches-manager />
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
@@ -1318,7 +1315,7 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/io/vertx/example/GameVerticle.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="283">
-          <caret line="100" column="48" lean-forward="true" selection-start-line="100" selection-start-column="48" selection-end-line="100" selection-end-column="48" />
+          <caret line="111" column="86" lean-forward="true" selection-start-line="111" selection-start-column="86" selection-end-line="111" selection-end-column="86" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
