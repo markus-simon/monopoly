@@ -67,8 +67,7 @@ public class PersistorVerticle extends AbstractVerticle {
         eb.consumer("findWithOptions", message -> {
             JsonObject document = new JsonObject(message.body().toString());
             String collection = document.getString("collection");
-
-            FindOptions findOptions     = new FindOptions().setFields(new JsonObject().put("_id", true).put("name", true).put("color",true));
+            FindOptions findOptions = new FindOptions().setFields(new JsonObject().put("_id", false).put("name", true).put("color",true));
             client.findWithOptions(collection, document, findOptions, res -> {
                 if (res.succeeded()) {
                     JsonArray array = new JsonArray();
@@ -87,13 +86,10 @@ public class PersistorVerticle extends AbstractVerticle {
             String collection = query.getString("collection");
             client.removeDocuments(collection, query, res -> {
                 if (res.succeeded()) {
-/*
-                    eb.publish("player.left", query);
-*/
+                    message.reply("done");
                 } else {
                     res.cause().printStackTrace();
                 }
-                message.reply("done");
             });
         });
 

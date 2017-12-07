@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Nice</title>
+</head>
+<body>
+
+<script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+
+    var width  = window.innerWidth;
+    var height = window.innerHeight - 20;
+    var data   = [];
+    var size   = 100;
+
+    var lineGenerator = d3.line().curve(d3.curveNatural);
+
+    function getPathData(data) {
+        return lineGenerator(data);
+    }
+
+    var svg = d3.select("body").append("svg")
+        .attr("width", width)
+        .attr("height", height)
+
+    function printMousePos(event) {
+
+        var inner      = [];
+        inner.push(event.clientX);
+        inner.push(event.clientY);
+
+
+        data.push(inner);
+        if (data.length > 2) {
+            data.shift();
+        }
+
+
+        console.log(data);
+
+        svg.append('path')
+            .attr('d', getPathData(data))
+            .attr("stroke", "black")
+            .attr("stroke-width", 1)
+            .style("fill", "none")
+            .transition()
+            .duration(1000)
+            .ease(d3.easeSin)
+            .attrTween("stroke-dasharray", function() {
+                var len = this.getTotalLength();
+                return function(t) { return (d3.interpolateString("0," + len, len + ",0"))(t) };
+            });
+    }
+
+    //document.addEventListener("click", printMousePos);
+    document.addEventListener("mousemove", printMousePos);
+
+
+    </script>
+
+</body>
+</html>
+
+
+
