@@ -35,7 +35,7 @@
 
 
         data.push(inner);
-        if (data.length > 2) {
+        if (data.length > 50) {
             data.shift();
         }
 
@@ -48,16 +48,16 @@
             .attr("stroke-width", 1)
             .style("fill", "none")
             .transition()
-            .duration(1000)
-            .ease(d3.easeSin)
+            .duration(7000)
+            .ease(d3.easeBounce)
             .attrTween("stroke-dasharray", function() {
                 var len = this.getTotalLength();
                 return function(t) { return (d3.interpolateString("0," + len, len + ",0"))(t) };
             });
     }
 
-    //document.addEventListener("click", printMousePos);
-    document.addEventListener("mousemove", printMousePos);
+    document.addEventListener("click", printMousePos);
+    //document.addEventListener("mousemove", printMousePos);
 
 
     </script>

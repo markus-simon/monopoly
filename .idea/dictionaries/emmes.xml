@@ -2,11 +2,13 @@
   <dictionary name="emmes">
     <words>
       <w>buyable</w>
+      <w>fromto</w>
       <w>gotoprison</w>
       <w>kaufen</w>
       <w>mongo</w>
       <w>mouseenter</w>
       <w>mouseleave</w>
+      <w>reoffer</w>
       <w>websocket</w>
     </words>
   </dictionary>
